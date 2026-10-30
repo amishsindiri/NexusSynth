@@ -1,0 +1,6 @@
+{
+  "name": "NexusSynth AI",
+  "description": "Enterprise Multi-Source Research Synthesis, Contradiction Detection & Knowledge Discovery Platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,353 @@
+1. Header & System Persona RoleRole: Principal Full-Stack Software Architect, Lead AI Systems Engineer, and Senior Database Administrator.Project Name: NexusSynth AI — Enterprise Multi-Source Research Synthesis, Contradiction Detection & Knowledge Discovery Platform.Execution Mode: Autonomous End-to-End Production Build. You must write complete, production-ready, fully functional code across every file in the stack. Never leave // TODO, // implement later, or stubbed mock responses. Every database table, Express route, Zod validator, Gemini AI prompt, and React component must be implemented to enterprise standards.2. Core Mission DirectiveBuild NexusSynth AI, a full-stack AI-powered Research & Knowledge Discovery platform designed to eliminate information fragmentation for academic researchers, policy analysts, R&D teams, and strategic investigators.Users create structured Research Workspaces, ingest multi-format source materials (PDF documents via multer + pdf-parse, raw text notes, and structured metadata), and utilize the Google Gemini API (@google/genai) to execute four high-value cognitive workflows:Automated Source Indexing & Claim Extraction: Automatically parsing uploaded documents into structured executive summaries, key empirical claims, methodology ratings, and entity tags.Cross-Source Synthesis Matrix: Generating comparative literature reviews and evidence matrices across multiple selected sources with strict inline citation grounding ([Source ID: X]).Contradiction & Consensus Engine: Identifying exact points of empirical agreement, methodological divergence, and unexplored research gaps across conflicting sources.Grounded Knowledge Q&A Chat: Conversational research exploration strictly anchored in the workspace's ingested corpus, returning verifiable source citations and confidence scores.3. Product GoalDeliver a responsive, secure, dark/light-capable SaaS web application where authenticated researchers can:Organize domain-specific investigations into isolated Workspaces.Upload PDFs or paste raw research texts/abstracts, which are immediately parsed and analyzed by Gemini to extract key claims, limitations, and entities.Run Multi-Document Synthesis Reports that output structured JSON rendered into rich UI tables, contradiction cards, and evidence-backed decision briefs.Query their workspace corpus via a Contextual Research Assistant that refuses to hallucinate outside the provided sources and cites specific uploaded documents.Export or save synthesized findings into persistent Knowledge Artifacts for downstream reporting.4. Mandatory FeaturesJWT + Bcrypt Authentication System: Complete registration, login, session verification (/api/auth/me), and protected route middleware.Research Workspace Management: Create, read, update, and delete domain-specific workspaces (e.g., Clinical & Biotech, Market & Competitive Intelligence, Public Policy & Legal, Computer Science & AI).Multi-Modal Source Ingestion Pipeline:PDF Upload (Multer): Accept .pdf files up to 10MB, extract raw text server-side using pdf-parse, and immediately trigger Gemini claim/entity extraction.Raw Text / URL Abstract Ingestion: Paste long-form articles, transcripts, or abstracts directly with custom bibliographic metadata (Author, Publication Year, Source Type).AI Source Deconstruction (Auto-Analysis on Ingest): Every ingested source is analyzed by Gemini to generate:Executive SummaryCore Empirical Claims (with strength rating: High, Moderate, Speculative)Key Entities / KeywordsStudy Methodology & Identified LimitationsCross-Source Synthesis & Contradiction Matrix: Users select 2 to 10 sources inside a workspace and choose a Synthesis Mode (Comprehensive Literature Review, Consensus vs. Contradiction Matrix, Research Gap Finder, or Executive Evidence Brief). Gemini outputs a strictly typed JSON report stored in PostgreSQL.Grounded Corpus Q&A Chat: Interactive chat threads per workspace where the backend injects the extracted text and claims of all workspace sources into the Gemini context window, returning answers with explicit source citations (citedSourceIds).Knowledge Graph & Entity Explorer: Visual tag cloud and filterable entity matrix showing which concepts appear across multiple documents in a workspace.Analytics & Research Telemetry Dashboard: High-level KPI metrics (Total Workspaces, Sources Analyzed, Claims Extracted, Contradictions Flagged, Synthesis Reports Generated).5. Technology RequirementsFrontendFramework: React.js (v18+) with ViteRouting: React Router v6 (react-router-dom)Styling: Tailwind CSS + lucide-react iconsHTTP Client: Axios with request/response interceptors for automatic Authorization: Bearer <token> injection and 401 handling.State & Feedback: React Context API for Auth & Active Workspace state, toast notifications for async AI operations.BackendRuntime & Framework: Node.js + Express.js (ES Modules or CommonJS, consistently configured)Authentication: jsonwebtoken (JWT) + bcryptjs (10 salt rounds)Validation: zod for all incoming request bodies, query parameters, and AI JSON response validationFile Handling: multer (memoryStorage) + pdf-parse for extracting text from uploaded PDF documentsSecurity & Utilities: cors, dotenv, helmet, express-rate-limitDatabaseEngine: PostgreSQL (Compatible with Replit Postgres, Neon, Supabase PostgreSQL, or Railway PostgreSQL)Driver: pg (Pool connection using DATABASE_URL environment variable with SSL support when required)Artificial IntelligenceSDK: Official @google/genai SDK (const { GoogleGenAI, Type } = require('@google/genai') or ES import)Model: gemini-2.5-flash for fast, high-context document analysis, structured synthesis, and grounded Q&A.Security Rule: GEMINI_API_KEY must reside strictly in backend .env variables and never be exposed to client bundles.6. Application Pages (Routes)Route PathAccessComponent NamePurpose/PublicLandingPageHero showcase of NexusSynth AI, architecture overview, problem/solution framing, and CTAs to Login/Register./loginPublicLoginPageEmail & password login form with Zod validation and demo account quick-fill button./registerPublicRegisterPageUser signup with Name, Email, Password, Role/Institution, and Primary Research Domain./dashboardProtectedDashboardPageGlobal KPI metrics, recent synthesis reports, workspace cards, and "Create Workspace" modal./workspaces/:idProtectedWorkspaceDetailPageTabbed command center for a specific workspace: 1. Source Library & Upload, 2. Synthesis & Contradiction Studio, 3. Grounded Q&A Chat, 4. Entity & Claim Explorer./workspaces/:id/sources/:sourceIdProtectedSourceInspectorPageDeep-dive view of a single document showing extracted text, AI-extracted empirical claims, methodology critique, and tags./workspaces/:id/syntheses/:synthesisIdProtectedSynthesisReportPageFull interactive view of a generated Cross-Source Synthesis report, displaying Consensus, Contradictions, Evidence Table, and Research Gaps./profileProtectedProfilePageUser account info, research domain preferences, and usage statistics.7. User FlowOnboarding: A researcher registers or logs in at /login and lands on /dashboard.Workspace Initialization: The user clicks "New Research Workspace", enters a title (e.g., "mRNA Delivery Vectors 2026"), selects a domain (Biotech & Clinical), and defines a core research question.Source Ingestion: Inside /workspaces/:id, the user uploads 3 PDF papers or pastes raw research abstracts.Automated AI Deconstruction: Upon upload, the backend extracts the text and calls Gemini (gemini-2.5-flash). Within seconds, the source card updates with an AI-generated summary, methodology classification, and a list of structured empirical claims.Cross-Source Synthesis: The user navigates to the Synthesis Studio tab, checks the boxes for the 3 ingested sources, selects "Consensus vs. Contradiction Matrix", and enters a custom focus prompt.Insight Discovery: Gemini cross-examines all selected sources and returns a structured synthesis report highlighting where the authors agree, where their data conflicts, and what remains unstudied.Contextual Interrogation: The user opens the Grounded Q&A Chat tab and asks: "Which study had the largest sample size and what were its specific limitations?" The AI answers accurately with clickable citation badges pointing to the exact workspace source.8. Target Domains & CategorizationAll workspaces and synthesis configurations must support the following 6 Target Research Domains:ACADEMIC_SCIENTIFIC — Academic & Scientific Literature (STEM, Peer-Reviewed Studies)CLINICAL_BIOTECH — Clinical Trials, Healthcare & Biomedical ResearchMARKET_COMPETITIVE — Market Intelligence, Consumer Insights & Product StrategyPOLICY_REGULATORY — Public Policy, Legal Frameworks & Regulatory ComplianceTECH_ENGINEERING — Software Architecture, AI Systems & Deep Tech R&DFINANCIAL_MACRO — Macroeconomic Trends, Equity Research & Risk AnalysisSource Categorization Types (source_type)PEER_REVIEWED_PAPERTECHNICAL_REPORTPOLICY_BRIEFMARKET_ANALYSISRAW_FIELD_NOTESWEB_ARTICLE_TRANSCRIPT9. Form & Advisory ConfigurationA. Workspace Creation Formtitle (Text, Required, 3–120 chars)domain (Select dropdown from the 6 Target Domains)research_question (Textarea, Required, 10–500 chars — guides all downstream AI synthesis in this workspace)description (Textarea, Optional)B. Source Upload / Ingestion Forminput_mode (Toggle: PDF File Upload vs. Raw Text / Abstract Paste)title (Text, Required, 3–200 chars)authors (Text, Optional, e.g., "Vaswani et al.")publication_year (Number, Optional, 1900–2026)source_type (Select dropdown from Source Categorization Types)source_url (URL string, Optional)file (File input accepting .pdf when in PDF mode)raw_content (Textarea, min 50 chars when in Raw Text mode)C. Synthesis Studio Configuration Formtitle (Text, Required — e.g., "Q3 Comparative Efficacy Synthesis")source_ids (Multi-select array of UUIDs/Integers — Minimum 2 sources required)synthesis_mode (Select: LITERATURE_REVIEW, CONTRADICTION_MATRIX, GAP_ANALYSIS, EXECUTIVE_DECISION_BRIEF)focus_directive (Textarea, Optional — Specific angle or hypothesis to test across the selected sources)10. Database Schema (Production SQL for PostgreSQL)Execute this schema initialization automatically on server startup (db/init.js) or via migration script so the app works out-of-the-box:SQLCREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 1. USERS TABLE
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    full_name VARCHAR(120) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    institution VARCHAR(150) DEFAULT 'Independent Researcher',
+    primary_domain VARCHAR(50) DEFAULT 'ACADEMIC_SCIENTIFIC',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. RESEARCH WORKSPACES TABLE
+CREATE TABLE IF NOT EXISTS workspaces (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(150) NOT NULL,
+    domain VARCHAR(50) NOT NULL,
+    research_question TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. RESEARCH SOURCES (INGESTED DOCUMENTS) TABLE
+CREATE TABLE IF NOT EXISTS sources (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    authors VARCHAR(255) DEFAULT 'Unknown Author',
+    publication_year INTEGER,
+    source_type VARCHAR(50) DEFAULT 'PEER_REVIEWED_PAPER',
+    source_url TEXT,
+    file_name VARCHAR(255),
+    raw_text TEXT NOT NULL,
+    word_count INTEGER DEFAULT 0,
+    ai_summary TEXT,
+    methodology_notes TEXT,
+    limitations TEXT,
+    key_claims JSONB DEFAULT '[]'::jsonb,
+    entities JSONB DEFAULT '[]'::jsonb,
+    key_metrics JSONB DEFAULT '[]'::jsonb,
+    analysis_status VARCHAR(30) DEFAULT 'COMPLETED',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. CROSS-SOURCE SYNTHESIS REPORTS TABLE
+CREATE TABLE IF NOT EXISTS syntheses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    synthesis_mode VARCHAR(50) NOT NULL,
+    focus_directive TEXT,
+    source_ids JSONB NOT NULL DEFAULT '[]'::jsonb,
+    executive_synthesis TEXT NOT NULL,
+    consensus_points JSONB DEFAULT '[]'::jsonb,
+    contradictions JSONB DEFAULT '[]'::jsonb,
+    research_gaps JSONB DEFAULT '[]'::jsonb,
+    evidence_matrix JSONB DEFAULT '[]'::jsonb,
+    recommendations JSONB DEFAULT '[]'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. WORKSPACE Q&A CHAT MESSAGES TABLE
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'assistant')),
+    content TEXT NOT NULL,
+    citations JSONB DEFAULT '[]'::jsonb,
+    confidence_level VARCHAR(30),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- PERFORMANCE INDEXES
+CREATE INDEX IF NOT EXISTS idx_workspaces_user_id ON workspaces(user_id);
+CREATE INDEX IF NOT EXISTS idx_sources_workspace_id ON sources(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_syntheses_workspace_id ON syntheses(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_chat_workspace_id ON chat_messages(workspace_id);
+11. Row Level Security (RLS) / Data Isolation RulesEvery database query on protected resources must enforce strict tenant isolation at the SQL query level by binding req.user.id (extracted from the verified JWT):Workspace Isolation: SELECT * FROM workspaces WHERE id = $1 AND user_id = $2Source Isolation: A user can only view, upload, or delete sources belonging to a workspace where workspaces.user_id = req.user.id.Synthesis Verification: When generating a synthesis across source_ids, the backend must query SELECT id, title, authors, publication_year, raw_text, ai_summary, key_claims FROM sources WHERE workspace_id = $1 AND user_id = $2 AND id = ANY($3::uuid[]) to guarantee a user cannot synthesize sources from another user's workspace.Chat History Isolation: All chat queries filter strictly by workspace_id = $1 AND user_id = $2.12. Backend API RoutesAuthentication Routes (/api/auth)POST /api/auth/register — Register a new user, hash password with bcrypt, return JWT + user object.POST /api/auth/login — Authenticate credentials, return JWT + user object.GET /api/auth/me — Verify JWT middleware, return current user profile and aggregate stats.Dashboard & Telemetry Routes (/api/dashboard)GET /api/dashboard/stats — Return total workspaces, total sources, total claims extracted, total synthesis reports, and recent activity feed for req.user.id.Workspace Routes (/api/workspaces)GET /api/workspaces — List all workspaces for req.user.id with source count and synthesis count.POST /api/workspaces — Create a new workspace (Zod validated).GET /api/workspaces/:id — Get workspace details, associated sources list, and synthesis reports list.DELETE /api/workspaces/:id — Delete workspace and cascade delete sources, syntheses, and chats.Source Ingestion & AI Deconstruction Routes (/api/workspaces/:workspaceId/sources)POST /api/workspaces/:workspaceId/sources — Multipart/form-data (multer single 'file') OR JSON body. Extracts PDF text (if file provided) or reads raw_content, runs Gemini Source Deconstruction Prompt, stores source + structured JSON analysis in PostgreSQL, and returns the created record.GET /api/workspaces/:workspaceId/sources/:sourceId — Retrieve full source details including raw_text, key_claims, entities, and methodology_notes.DELETE /api/workspaces/:workspaceId/sources/:sourceId — Delete a specific source.Cross-Source Synthesis Routes (/api/workspaces/:workspaceId/syntheses)POST /api/workspaces/:workspaceId/syntheses — Validate source_ids (min 2), fetch source texts/claims from DB, execute Gemini Cross-Source Synthesis Prompt, save structured synthesis report in syntheses table, and return the report.GET /api/workspaces/:workspaceId/syntheses/:synthesisId — Get full synthesis report by ID.DELETE /api/workspaces/:workspaceId/syntheses/:synthesisId — Delete a synthesis report.Grounded Knowledge Q&A Routes (/api/workspaces/:workspaceId/chat)GET /api/workspaces/:workspaceId/chat — Fetch chronological chat history for the workspace.POST /api/workspaces/:workspaceId/chat — Accept user question, load all workspace sources, execute Gemini Grounded Q&A Prompt, persist both user message and assistant response (with citations) to chat_messages, and return the response.DELETE /api/workspaces/:workspaceId/chat — Clear workspace chat history.13. Gemini SDK Setup & Server-Side SecurityInstall and initialize @google/genai strictly on the backend (server/services/geminiService.js):JavaScriptimport { GoogleGenAI, Type } from "@google/genai";
+import dotenv from "dotenv";
+dotenv.config();
+
+if (!process.env.GEMINI_API_KEY) {
+  console.warn("⚠️ WARNING: GEMINI_API_KEY is not set in environment variables.");
+}
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const MODEL_NAME = "gemini-2.5-flash";
+Always use config: { systemInstruction, responseMimeType: "application/json", responseSchema: ... } so Gemini returns guaranteed, parseable JSON matching your database columns.Implement defensive try/catch error handling around all ai.models.generateContent calls, truncating overly massive texts cleanly (e.g., 30,000 characters per source) so token limits are never breached.14. AI System PromptUse the following core systemInstruction across all Gemini calls in geminiService.js:PlaintextYou are NexusSynth AI, a Principal Research Methodologist, Epistemological Analyst, and Scientific Knowledge Synthesis Engine.
+Your core operational rules:
+1. STRICT EVIDENCE GROUNDING: Base all claims, syntheses, consensus points, and answers strictly on the provided source documents. Never fabricate external citations or extrapolate beyond the evidence without explicitly labeling it as a hypothesis or research gap.
+2. INLINE SOURCE ATTRIBUTION: Whenever referencing a finding, methodology, or statistic in multi-source tasks, explicitly cite the provided Source ID and Title.
+3. CONTRADICTION DETECTION: Actively scrutinize sources for conflicting empirical outcomes, differing sample sizes, incompatible definitions, or methodological biases.
+4. PRECISION & OBJECTIVITY: Write in clear, dense, analytical prose suitable for principal investigators, policy directors, and R&D leads. Output strictly valid JSON conforming to the requested schema.
+15. Detailed AI Prompts (with required JSON Schemas)Prompt 1: Automated Source Deconstruction (analyzeSourceDocument)Triggered on: POST /api/workspaces/:workspaceId/sourcesUser Prompt Template:PlaintextAnalyze the following research source for a workspace focused on:
+Workspace Domain: {{domain}}
+Core Research Question: {{research_question}}
+
+Source Metadata:
+- Title: {{title}}
+- Authors: {{authors}}
+- Publication Year: {{publication_year}}
+- Source Type: {{source_type}}
+
+Raw Source Content:
+"""
+{{raw_text}}
+"""
+
+Deconstruct this document into an executive summary, methodology assessment, limitations, empirical claims with evidence strength ratings, key quantitative metrics, and core domain entities.
+Required JSON Schema (responseSchema):JSON{
+  "type": "OBJECT",
+  "properties": {
+    "ai_summary": { "type": "STRING", "description": "Comprehensive 3-5 sentence executive summary of the source." },
+    "methodology_notes": { "type": "STRING", "description": "Analysis of research design, sample size, data collection, or analytical approach." },
+    "limitations": { "type": "STRING", "description": "Explicit or implicit methodological constraints, biases, or scope boundaries." },
+    "key_claims": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "claim": { "type": "STRING" },
+          "supporting_evidence": { "type": "STRING" },
+          "confidence": { "type": "STRING", "enum": ["HIGH", "MODERATE", "SPECULATIVE"] },
+          "relevance_to_workspace": { "type": "STRING" }
+        },
+        "required": ["claim", "supporting_evidence", "confidence", "relevance_to_workspace"]
+      }
+    },
+    "entities": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" },
+      "description": "6 to 12 normalized domain concepts, technologies, biomarkers, organizations, or frameworks mentioned."
+    },
+    "key_metrics": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "metric_name": { "type": "STRING" },
+          "value": { "type": "STRING" },
+          "context": { "type": "STRING" }
+        },
+        "required": ["metric_name", "value", "context"]
+      }
+    }
+  },
+  "required": ["ai_summary", "methodology_notes", "limitations", "key_claims", "entities", "key_metrics"]
+}
+Prompt 2: Cross-Source Synthesis & Contradiction Matrix (generateCrossSourceSynthesis)Triggered on: POST /api/workspaces/:workspaceId/synthesesUser Prompt Template:PlaintextPerform a rigorous Cross-Source Knowledge Synthesis across the following {{source_count}} research sources.
+
+Workspace Context:
+- Title: {{workspace_title}}
+- Domain: {{domain}}
+- Core Research Question: {{research_question}}
+- Selected Synthesis Mode: {{synthesis_mode}}
+- Researcher Focus Directive: {{focus_directive}}
+
+Ingested Corpus Sources:
+{{formatted_sources_block}}
+
+Synthesize these sources thoroughly. Identify exact points of consensus, empirical or methodological contradictions between sources, critical unexplored research gaps, a comparative evidence matrix per theme, and actionable evidence-based recommendations. Always reference the exact Source ID and Title.
+Required JSON Schema (responseSchema):JSON{
+  "type": "OBJECT",
+  "properties": {
+    "executive_synthesis": { "type": "STRING", "description": "Multi-paragraph cohesive synthesis addressing the core research question and focus directive across all sources." },
+    "consensus_points": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "theme": { "type": "STRING" },
+          "synthesis_statement": { "type": "STRING" },
+          "supporting_sources": { "type": "ARRAY", "items": { "type": "STRING" } },
+          "strength_of_agreement": { "type": "STRING", "enum": ["STRONG", "MODERATE", "EMERGING"] }
+        },
+        "required": ["theme", "synthesis_statement", "supporting_sources", "strength_of_agreement"]
+      }
+    },
+    "contradictions": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "topic": { "type": "STRING" },
+          "conflicting_positions": { "type": "STRING" },
+          "sources_involved": { "type": "ARRAY", "items": { "type": "STRING" } },
+          "methodological_explanation": { "type": "STRING", "description": "Why do these sources disagree? (e.g., different cohorts, timeframe, assumptions)" }
+        },
+        "required": ["topic", "conflicting_positions", "sources_involved", "methodological_explanation"]
+      }
+    },
+    "research_gaps": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "gap_title": { "type": "STRING" },
+          "description": { "type": "STRING" },
+          "suggested_next_study": { "type": "STRING" },
+          "priority": { "type": "STRING", "enum": ["CRITICAL", "HIGH", "MEDIUM"] }
+        },
+        "required": ["gap_title", "description", "suggested_next_study", "priority"]
+      }
+    },
+    "evidence_matrix": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "dimension": { "type": "STRING" },
+          "comparative_finding": { "type": "STRING" },
+          "primary_source_ref": { "type": "STRING" },
+          "evidence_quality": { "type": "STRING", "enum": ["HIGH", "MODERATE", "LOW"] }
+        },
+        "required": ["dimension", "comparative_finding", "primary_source_ref", "evidence_quality"]
+      }
+    },
+    "recommendations": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "action": { "type": "STRING" },
+          "rationale": { "type": "STRING" },
+          "expected_impact": { "type": "STRING" }
+        },
+        "required": ["action", "rationale", "expected_impact"]
+      }
+    }
+  },
+  "required": ["executive_synthesis", "consensus_points", "contradictions", "research_gaps", "evidence_matrix", "recommendations"]
+}
+Prompt 3: Grounded Corpus Q&A Assistant (answerWorkspaceQuestion)Triggered on: POST /api/workspaces/:workspaceId/chatUser Prompt Template:PlaintextYou are answering a researcher's question strictly using the ingested sources inside Workspace "{{workspace_title}}" (Research Question: "{{research_question}}").
+
+Available Workspace Sources:
+{{formatted_sources_block}}
+
+Recent Conversation History:
+{{recent_chat_history}}
+
+Researcher Question:
+"{{user_question}}"
+
+Provide a rigorous, evidence-grounded answer. If the corpus does not contain sufficient information to answer part of the question, state that clearly. Cite every source used in the `citations` array.
+Required JSON Schema (responseSchema):JSON{
+  "type": "OBJECT",
+  "properties": {
+    "answer": { "type": "STRING", "description": "Detailed, markdown-formatted analytical response with inline references." },
+    "confidence_level": { "type": "STRING", "enum": ["HIGH_CORPUS_SUPPORT", "PARTIAL_CORPUS_SUPPORT", "INSUFFICIENT_CORPUS_DATA"] },
+    "citations": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "source_id": { "type": "STRING" },
+          "source_title": { "type": "STRING" },
+          "relevant_excerpt_or_claim": { "type": "STRING" }
+        },
+        "required": ["source_id", "source_title", "relevant_excerpt_or_claim"]
+      }
+    },
+    "follow_up_questions": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    }
+  },
+  "required": ["answer", "confidence_level", "citations", "follow_up_questions"]
+}
+16. Zod Validation RequirementsCreate server/middleware/validators.js using zod:registerSchema:full_name: z.string().min(2).max(120)email: z.string().email()password: z.string().min(6).max(100)institution: z.string().optional()primary_domain: z.enum(['ACADEMIC_SCIENTIFIC', 'CLINICAL_BIOTECH', 'MARKET_COMPETITIVE', 'POLICY_REGULATORY', 'TECH_ENGINEERING', 'FINANCIAL_MACRO']).optional()loginSchema:email: z.string().email()password: z.string().min(1)workspaceSchema:title: z.string().min(3).max(150)domain: z.enum(['ACADEMIC_SCIENTIFIC', 'CLINICAL_BIOTECH', 'MARKET_COMPETITIVE', 'POLICY_REGULATORY', 'TECH_ENGINEERING', 'FINANCIAL_MACRO'])research_question: z.string().min(10).max(1000)description: z.string().max(2000).optional().nullable()sourceIngestSchema:title: z.string().min(3).max(255)authors: z.string().max(255).optional()publication_year: z.coerce.number().int().min(1900).max(2030).optional().nullable()source_type: z.enum(['PEER_REVIEWED_PAPER', 'TECHNICAL_REPORT', 'POLICY_BRIEF', 'MARKET_ANALYSIS', 'RAW_FIELD_NOTES', 'WEB_ARTICLE_TRANSCRIPT']).default('PEER_REVIEWED_PAPER')source_url: z.string().url().optional().or(z.literal(''))raw_content: z.string().optional() (Validated in controller to ensure either req.file or raw_content >= 50 chars is present).synthesisCreateSchema:title: z.string().min(3).max(200)source_ids: z.array(z.string().uuid()).min(2, "Select at least 2 sources to synthesize")synthesis_mode: z.enum(['LITERATURE_REVIEW', 'CONTRADICTION_MATRIX', 'GAP_ANALYSIS', 'EXECUTIVE_DECISION_BRIEF'])focus_directive: z.string().max(1000).optional().nullable()chatQuestionSchema:question: z.string().min(3).max(2000)17. Frontend Components ListImplement a cohesive, modern scientific SaaS aesthetic (deep slate/indigo sidebar, crisp cards, emerald/amber/rose semantic badges for evidence confidence and contradictions):Navbar.jsx & Sidebar.jsx — Responsive navigation with quick workspace switcher, active domain badge, and user profile menu.ProtectedRoute.jsx — Checks AuthContext token; shows spinner while verifying /api/auth/me, redirects unauthenticated users to /login.KpiStatCard.jsx — Displays workspace telemetry counters with icons and trend context.WorkspaceModal.jsx — Modal dialog to create a new Research Workspace with pre-filled sample templates for rapid testing.SourceUploadModal.jsx — Dual-mode ingestion modal: Drag-and-drop .pdf upload or paste raw research text, plus a "Load Sample Research Paper" button so evaluators can test with 1 click.SourceCard.jsx — Displays source metadata, word count, entity badges, claim count, and quick actions (Inspect Claims, Delete).ClaimBadgeList.jsx — Renders extracted empirical claims with color-coded confidence pills (HIGH = Emerald, MODERATE = Amber, SPECULATIVE = Rose).SynthesisBuilderPanel.jsx — Interactive source selector checklist, Synthesis Mode cards, focus directive input, and loading state with progress steps.ContradictionMatrixView.jsx — Dedicated visual breakdown of Consensus Points vs. Empirical Contradictions vs. Research Gaps.GroundedChatPanel.jsx — Full-height research chat interface with clickable citation chips (``), confidence indicator banner, and one-click follow-up question pills.EntityKnowledgeMatrix.jsx — Interactive filterable grid showing all extracted concepts/entities across the workspace and which documents mention them.18. Security RequirementsAPI Key Isolation: GEMINI_API_KEY and JWT_SECRET must only exist in the backend environment and never be referenced in any VITE_* frontend variable.Password Hashing: Hash all passwords with bcryptjs (saltRounds = 10) prior to SQL INSERT. Never return password_hash in API payloads.JWT Verification Middleware (authMiddleware.js): Validate Authorization: Bearer <token> on every /api/dashboard/* and /api/workspaces/* endpoint. Return 401 Unauthorized on expired or malformed tokens.Multer Upload Constraints: Restrict file uploads to application/pdf only and enforce limits: { fileSize: 10 * 1024 * 1024 } (10MB max).Parameterized SQL Queries: Use $1, $2, $3 parameterized queries via pg across the entire codebase to prevent SQL injection.CORS & Rate Limiting: Configure cors for the frontend origin and apply express-rate-limit on /api/auth/* and AI generation endpoints.19. Environment Variables TemplateBackend (server/.env.example)Code snippetPORT=5000
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:password@localhost:5432/nexussynth_db
+JWT_SECRET=super_secret_enterprise_jwt_signing_key_2026
+JWT_EXPIRES_IN=7d
+GEMINI_API_KEY=your_google_gemini_api_key_here
+CLIENT_URL=http://localhost:5173
+Frontend (client/.env.example)Code snippetVITE_API_BASE_URL=http://localhost:5000/api
+20. Suggested Folder StructurePlaintextnexussynth-ai/
+├── README.md
+├── package.json
+├── server/
+│   ├── package.json
+│   ├── .env.example
+│   ├── index.js
+│   ├── db/
+│   │   ├── pool.js
+│   │   ├── init.js
+│   │   └── seedDemoData.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   ├── errorHandler.js
+│   │   └── validators.js
+│   ├── services/
+│   │   ├── geminiService.js
+│   │   └── pdfService.js
+│   └── routes/
+│       ├── authRoutes.js
+│       ├── dashboardRoutes.js
+│       ├── workspaceRoutes.js
+│       ├── sourceRoutes.js
+│       ├── synthesisRoutes.js
+│       └── chatRoutes.js
+└── client/
+    ├── package.json
+    ├── vite.config.js
+    ├── tailwind.config.js
+    ├── index.html
+    └── src/
+        ├── main.jsx
+        ├── App.jsx
+        ├── index.css
+        ├── api/
+        │   └── axiosClient.js
+        ├── context/
+        │   └── AuthContext.jsx
+        ├── components/
+        │   ├── layout/
+        │   │   ├── Navbar.jsx
+        │   │   ├── Sidebar.jsx
+        │   │   └── ProtectedRoute.jsx
+        │   ├── workspace/
+        │   │   ├── WorkspaceModal.jsx
+        │   │   ├── SourceUploadModal.jsx
+        │   │   ├── SourceCard.jsx
+        │   │   ├── ClaimBadgeList.jsx
+        │   │   ├── SynthesisBuilderPanel.jsx
+        │   │   ├── ContradictionMatrixView.jsx
+        │   │   ├── GroundedChatPanel.jsx
+        │   │   └── EntityKnowledgeMatrix.jsx
+        │   └── common/
+        │       └── KpiStatCard.jsx
+        └── pages/
+            ├── LandingPage.jsx
+            ├── LoginPage.jsx
+            ├── RegisterPage.jsx
+            ├── DashboardPage.jsx
+            ├── WorkspaceDetailPage.jsx
+            ├── SourceInspectorPage.jsx
+            ├── SynthesisReportPage.jsx
+            └── ProfilePage.jsx
+21. Implementation PhasesPhase 1: Database & Server Foundation
+Set up server/db/pool.js and server/db/init.js to automatically create all 5 PostgreSQL tables and indexes on server boot. Include a seedDemoData.js utility or demo endpoint so a pre-populated demo account (demo@nexussynth.ai / DemoPass123!) comes with a sample Research Workspace and 3 pre-analyzed scientific sources.Phase 2: Authentication & Zod Validation Layer
+Build JWT authentication (/api/auth/register, /api/auth/login, /api/auth/me), authMiddleware.js, and all Zod schemas in validators.js.Phase 3: Gemini AI Service & PDF Ingestion Engine
+Implement pdfService.js (multer + pdf-parse) and geminiService.js using @google/genai (gemini-2.5-flash) with the 3 structured JSON schemas (analyzeSourceDocument, generateCrossSourceSynthesis, answerWorkspaceQuestion) plus deterministic fallback handling if the API key is missing during local dry runs.Phase 4: REST API Controllers & Tenant Isolation
+Implement all workspace, source, synthesis, dashboard, and grounded chat endpoints with strict user_id ownership checks.Phase 5: Frontend Core, Auth Context & Dashboard
+Build the Vite + React + Tailwind frontend, Axios interceptor, AuthContext, LandingPage, LoginPage (with 1-click Demo Login button), RegisterPage, and DashboardPage.Phase 6: Workspace Command Center, Synthesis Studio & Grounded Chat
+Build WorkspaceDetailPage with its 4 interactive tabs, SourceInspectorPage, and SynthesisReportPage with visual Consensus/Contradiction cards and clickable source citations.Phase 7: Documentation & Submission Readiness
+Generate a comprehensive root README.md containing the Problem Statement, Solution Description, System Architecture, Setup Instructions, and Deployment Guide (Vercel/Netlify + Render/Railway + Neon/Supabase Postgres).22. Acceptance CriteriaZero Placeholders: Every file in both server/ and client/ is completely written and wired up.Real PDF & Text Ingestion: Uploading a .pdf file or pasting research text extracts the content, invokes Gemini, and saves ai_summary, key_claims, entities, key_metrics, and limitations in PostgreSQL.True Multi-Document Synthesis: Selecting 2+ sources and running a synthesis generates a persisted report containing consensus_points, contradictions, research_gaps, evidence_matrix, and recommendations.Grounded Citations in Chat: Asking a question in the Workspace Q&A tab returns a response anchored in the workspace's sources along with clickable citations badges and suggested follow_up_questions.1-Click Evaluator Experience: Login page includes a "Try Instant Demo Account" button, and the Source Upload modal includes "Load Sample Research Source" templates so reviewers can test every AI feature immediately.Submission-Ready README.md: Includes the formal Problem Statement and Solution Description required by the hackathon/assignment rubric.23. Final Instruction to Coding AgentBegin building NexusSynth AI immediately. Start by creating the project structure, package.json manifests, PostgreSQL initialization script (server/db/init.js), Gemini AI service (server/services/geminiService.js), and all Express routes before constructing the complete React + Tailwind frontend and README.md. Write every single file in full without truncation or abbreviated code blocks.
